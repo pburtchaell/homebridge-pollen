@@ -1,0 +1,7 @@
+src/
+tsconfig.json
+nodemon.json
+eslint.config.js
+.github/
+.claude/
+.cursor/

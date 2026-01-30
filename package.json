@@ -1,0 +1,34 @@
+{
+  "name": "homebridge-pollen",
+  "version": "1.0.0",
+  "description": "Homebridge plugin that exposes pollen levels as HomeKit sensors using the Ambee API",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "engines": {
+    "node": ">=20.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "keywords": [
+    "homebridge",
+    "homebridge-plugin",
+    "pollen",
+    "allergy",
+    "allergies"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "lint": "eslint src/",
+    "watch": "npm run build && npm link && nodemon",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^20.19.30",
+    "eslint": "^9.18.0",
+    "homebridge": "^1.8.0",
+    "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
+  }
+}
