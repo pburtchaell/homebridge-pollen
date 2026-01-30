@@ -7,96 +7,67 @@
 - Node.js 20 or later
 - An [Ambee API key](https://api-dashboard.getambee.com/) (free tier works fine)
 
-### Setup
+### Quick start
+
+Run the setup script to install dependencies, create the local Homebridge config, and link the plugin:
 
 ```sh
-npm install
+npm run setup
 ```
 
-### Build and Lint
+The script will prompt you for your Ambee API key and location. 
+
+### Development
 
 ```sh
-npm run build   # compile TypeScript to dist/
-npm run lint    # run ESLint
+npm run dev
 ```
-
-### How it works
 
 The development workflow runs an isolated local Homebridge instance, completely separate from any system-wide Homebridge installation you may have:
 
-- **Isolated config directory** — The `./homebridge` folder holds its own `config.json` and cache. Your production Homebridge setup remains untouched.
-- **`npm link`** — Makes the plugin discoverable to Homebridge without publishing to npm.
-- **`nodemon`** — Watches `src/` and automatically rebuilds TypeScript and restarts Homebridge on every change.
+- `./.homebridge` folder holds its own `config.json` and cache
+- **`npm link`** — Makes the plugin discoverable to Homebridge without publishing to npm
+- **`nodemon`** — Watches `src/` and automatically rebuilds TypeScript and restarts Homebridge on every change
 
-You don't need to install Homebridge separately — `npm run watch` starts everything for you.
+
+### Build
+
+```sh
+npm run build 
+```
 
 ### Testing the plugin
 
-The project uses `nodemon` to rebuild and restart Homebridge on source changes. This runs Homebridge in debug mode (`-D`) with a local config directory (`./homebridge`), keeping your system Homebridge installation untouched.
+After running `npm run setup` and `npm run dev`, verify in the console output that:
 
-1. Create a local Homebridge config directory and config file:
+- 3 ContactSensor accessories are registered (Pollen High, Pollen Medium, Pollen Low)
+- An initial pollen fetch completes and one sensor shows `DETECTED`
+- Debug log lines show the fetched counts and level classifications
 
-   ```sh
-   mkdir -p homebridge
-   cat > homebridge/config.json << 'EOF'
-   {
-     "bridge": {
-       "name": "Test Homebridge",
-       "username": "CC:22:3D:E3:CE:30",
-       "port": 51826,
-       "pin": "031-45-154"
-     },
-     "platforms": [
-       {
-         "platform": "HomebridgePollen",
-         "apiKey": "YOUR_AMBEE_API_KEY",
-         "location": "10001"
-       }
-     ]
-   }
-   EOF
-   ```
+To test optional features, edit `.homebridge/config.json` and add:
 
-2. Replace `YOUR_AMBEE_API_KEY` with your actual key.
+```json
+{
+  "platform": "HomebridgePollen",
+  "apiKey": "YOUR_AMBEE_API_KEY",
+  "location": "10001",
+  "enableCategorySensors": true,
+  "enableAirQualitySensor": true
+}
+```
 
-3. Link the plugin locally and start the dev server:
+This adds 9 per-category sensors (Tree/Grass/Weed x High/Medium/Low) and 1 AirQualitySensor. Restart the dev server to pick up the changes.
 
-   ```sh
-   npm run watch
-   ```
+### Pairing with Apple Home
 
-   This will:
-   - Build the TypeScript source
-   - `npm link` the plugin so Homebridge can discover it
-   - Start `nodemon`, which recompiles and restarts Homebridge whenever you edit a file in `src/`
+To test end-to-end in the Home app:
 
-4. Verify in the console output that:
-   - 3 ContactSensor accessories are registered (Pollen High, Pollen Medium, Pollen Low)
-   - An initial pollen fetch completes and one sensor shows `DETECTED`
-   - Debug log lines show the fetched counts and level classifications
+1. Open the Home app on iOS or macOS
+2. Tap **+** > **Add Accessory** > **More Options...**
+3. Select "Test Homebridge" from the list
+4. Enter the PIN: `031-45-154`
 
-5. To test optional features, add these to your config and restart:
-
-   ```json
-   {
-     "platform": "HomebridgePollen",
-     "apiKey": "YOUR_AMBEE_API_KEY",
-     "location": "10001",
-     "enableCategorySensors": true,
-     "enableAirQualitySensor": true
-   }
-   ```
-
-   This adds 9 per-category sensors (Tree/Grass/Weed x High/Medium/Low) and 1 AirQualitySensor.
-
-6. **(Optional)** To test end-to-end in Apple Home, pair the test bridge:
-
-   - Open the Home app on iOS or macOS
-   - Tap **+** > **Add Accessory** > **More Options...**
-   - Select "Test Homebridge" from the list
-   - Enter the PIN: `031-45-154`
-
-   The test bridge uses port 51826, so it can run alongside a production Homebridge instance on the default port. When you're done testing, unpair the bridge from Home to avoid stale accessories.
+The test bridge uses port 51826, so it can run alongside a production Homebridge instance on the default port. When you're done testing, unpair the bridge from Home to avoid stale accessories.
 
 ### Project Structure
 

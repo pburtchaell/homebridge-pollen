@@ -8,7 +8,7 @@ Homebridge dynamic platform plugin that fetches pollen data from the Ambee API a
 
 - `npm run build` — clean compile TypeScript to `dist/`
 - `npm run lint` — ESLint
-- `npm run watch` — build, link, and start Homebridge with nodemon (auto-restarts on src changes)
+- `npm run dev` — build, link, and start Homebridge with nodemon (auto-restarts on src changes)
 
 ## Homebridge Plugin Architecture
 

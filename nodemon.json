@@ -1,7 +1,7 @@
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "tsc && homebridge -D -U ./homebridge",
+  "exec": "tsc && homebridge -D -U ./.homebridge",
   "signal": "SIGTERM",
   "env": {
     "NODE_OPTIONS": "--trace-warnings"
