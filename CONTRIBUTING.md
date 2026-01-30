@@ -1,6 +1,6 @@
 # Contributing
 
-## Local Development
+## Local development
 
 ### Prerequisites
 
@@ -40,9 +40,9 @@ npm run build
 
 After running `npm run setup` and `npm run dev`, verify in the console output that:
 
-- 3 ContactSensor accessories are registered (Pollen High, Pollen Medium, Pollen Low)
-- An initial pollen fetch completes and one sensor shows `DETECTED`
-- Debug log lines show the fetched counts and level classifications
+- 1 AirQualitySensor accessory is registered (Pollen)
+- An initial pollen fetch completes and logs the pollen counts
+- The air quality value is set based on the overall pollen count
 
 To test optional features, edit `.homebridge/config.json` and add:
 
@@ -51,12 +51,11 @@ To test optional features, edit `.homebridge/config.json` and add:
   "platform": "HomebridgePollen",
   "apiKey": "YOUR_AMBEE_API_KEY",
   "location": "10001",
-  "enableCategorySensors": true,
-  "enableAirQualitySensor": true
+  "enableCategorySensors": true
 }
 ```
 
-This adds 9 per-category sensors (Tree/Grass/Weed x High/Medium/Low) and 1 AirQualitySensor. Restart the dev server to pick up the changes.
+This adds 3 additional air quality sensors for Tree, Grass, and Weed pollen. Restart the dev server to pick up the changes.
 
 ### Pairing with Apple Home
 
@@ -69,19 +68,19 @@ To test end-to-end in the Home app:
 
 The test bridge uses port 51826, so it can run alongside a production Homebridge instance on the default port. When you're done testing, unpair the bridge from Home to avoid stale accessories.
 
-### Project Structure
+### Project structure
 
 ```
 src/
 ├── index.ts              # Entry point — registers platform with Homebridge
-├── settings.ts           # Constants and default thresholds
-├── types.ts              # TypeScript interfaces and helper functions
+├── settings.ts           # Constants (plugin name, API URL, poll intervals)
+├── types.ts              # TypeScript interfaces
 ├── pollenService.ts      # Ambee API client (fetch, parse, cache)
 ├── platform.ts           # DynamicPlatformPlugin (discovery, polling)
-└── platformAccessory.ts  # Maps pollen data to HomeKit services
+└── platformAccessory.ts  # Maps pollen data to HomeKit AirQualitySensor
 ```
 
-## Submitting Changes
+## Submitting changes
 
 1. Create a branch from `main`.
 2. Make your changes and verify `npm run build` and `npm run lint` pass.

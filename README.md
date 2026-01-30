@@ -1,15 +1,15 @@
 # homebridge-pollen
 
 [![npm](https://img.shields.io/npm/v/homebridge-pollen)](https://www.npmjs.com/package/homebridge-pollen)
-[![license](https://img.shields.io/npm/l/homebridge-pollen)](LICENSE)
+[![downloads](https://img.shields.io/npm/dm/homebridge-pollen)](https://www.npmjs.com/package/homebridge-pollen)
+[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-Homebridge plugin that exposes pollen levels as HomeKit sensors using the [Ambee API](https://www.getambee.com/).
+Homebridge plugin that exposes pollen levels as HomeKit air quality sensors using the [Ambee API](https://www.getambee.com/).
 
 ## Features
 
-- **Contact sensors for automations** — Pollen levels are exposed as contact sensors, which can trigger HomeKit automations natively ("When Pollen High detected...")
+- **Air quality sensors** — Pollen counts are mapped to HomeKit's 5-level air quality scale (Excellent, Good, Fair, Inferior, Poor)
 - **Per-category sensors** — Optionally add separate sensors for tree, grass, and weed pollen
-- **Air quality sensor** — Optionally add an air quality sensor that maps overall pollen count to a 1-5 severity scale
 - **No runtime dependencies** — Uses Node.js 20+ built-in `fetch`
 
 ## Requirements
@@ -65,60 +65,27 @@ You can configure the plugin using the Homebridge UI or by editing your `config.
 | `apiKey` | Yes | — | Your Ambee API key |
 | `location` | Yes | — | Zip code or place name to fetch pollen data for |
 | `pollInterval` | No | `60` | How often to fetch pollen data, in minutes (minimum 15) |
-| `enableCategorySensors` | No | `false` | Add 9 additional sensors for tree/grass/weed at each level |
-| `enableAirQualitySensor` | No | `false` | Add an air quality sensor accessory |
-| `thresholds` | No | — | Override default pollen count thresholds (see below) |
+| `enableCategorySensors` | No | `false` | Add 3 additional sensors for tree, grass, and weed pollen |
 
 ## How it works
 
-The plugin creates contact sensors that represent pollen levels. By default, you get three sensors:
+The plugin creates an air quality sensor that displays the overall pollen level. Pollen counts are mapped to HomeKit's air quality scale:
 
-- **Pollen High** — Triggered when pollen count is high
-- **Pollen Medium** — Triggered when pollen count is medium  
-- **Pollen Low** — Triggered when pollen count is low
-
-Contact sensors are used because their state changes are native HomeKit automation triggers. This lets you create automations like "When Pollen High is detected, turn on the air purifier."
+| Pollen count | Air quality |
+|--------------|-------------|
+| 0-20         | Excellent   |
+| 21-80        | Good        |
+| 81-200       | Fair        |
+| 201-400      | Inferior    |
+| 400+         | Poor        |
 
 ### Optional sensors
 
-When `enableCategorySensors` is enabled, you get 9 additional sensors:
+When `enableCategorySensors` is enabled, you get 3 additional air quality sensors:
 
-- Tree Pollen High / Medium / Low
-- Grass Pollen High / Medium / Low
-- Weed Pollen High / Medium / Low
-
-When `enableAirQualitySensor` is enabled, you get a single air quality sensor that maps the overall pollen count to HomeKit's 5-level air quality scale.
-
-## Pollen thresholds
-
-Pollen counts are classified as Low, Medium, or High based on thresholds from the National Allergy Bureau (NAB). You can override these defaults in your configuration.
-
-| Category | Low (at or below) | High (at or above) |
-|----------|-------------------|---------------------|
-| Overall | 50 | 200 |
-| Tree | 15 | 90 |
-| Grass | 20 | 200 |
-| Weed | 10 | 50 |
-
-Counts between the low and high thresholds are classified as Medium.
-
-### Customizing thresholds
-
-```json
-{
-  "platforms": [
-    {
-      "platform": "HomebridgePollen",
-      "apiKey": "your-api-key",
-      "location": "10001",
-      "thresholds": {
-        "overall": { "low": 30, "high": 150 },
-        "tree": { "low": 10, "high": 60 }
-      }
-    }
-  ]
-}
-```
+- **Tree Pollen** — Air quality based on tree pollen count
+- **Grass Pollen** — Air quality based on grass pollen count
+- **Weed Pollen** — Air quality based on weed pollen count
 
 ## License
 

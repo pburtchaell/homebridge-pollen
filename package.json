@@ -1,6 +1,6 @@
 {
   "name": "homebridge-pollen",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Homebridge plugin that exposes pollen levels as HomeKit sensors using the Ambee API",
   "license": "MIT",
   "main": "dist/index.js",

@@ -7,13 +7,11 @@ import type {
 } from 'homebridge';
 import {
   DEFAULT_POLL_INTERVAL,
-  DEFAULT_THRESHOLDS,
   MIN_POLL_INTERVAL,
   PLATFORM_NAME,
   PLUGIN_NAME,
 } from './settings.js';
-import type { AccessoryDefinition, PollenCategory, PollenConfig, PollenLevel } from './types.js';
-import { resolveThresholds } from './types.js';
+import type { AccessoryDefinition, PollenCategory, PollenConfig } from './types.js';
 import { PollenService } from './pollenService.js';
 import { PollenAccessoryHandler } from './platformAccessory.js';
 
@@ -38,11 +36,9 @@ export class PollenPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    const thresholds = resolveThresholds(pollenConfig, DEFAULT_THRESHOLDS);
     this.pollenService = new PollenService(
       pollenConfig.apiKey,
       pollenConfig.location,
-      thresholds,
       this.log,
     );
 
@@ -102,43 +98,24 @@ export class PollenPlatform implements DynamicPlatformPlugin {
     const location = config.location;
     const definitions: AccessoryDefinition[] = [];
 
-    // Default 3 overall sensors: High, Medium, Low
-    const overallLevels: PollenLevel[] = ['High', 'Medium', 'Low'];
-    for (const level of overallLevels) {
-      definitions.push({
-        id: `pollen-overall-${level}-${location}`,
-        name: `Pollen ${level}`,
-        type: 'contact',
-        level,
-        category: 'overall',
-      });
-    }
+    // Main pollen air quality sensor (always created)
+    definitions.push({
+      id: `pollen-overall-${location}`,
+      name: 'Pollen',
+      category: 'overall',
+    });
 
-    // Optional per-category sensors (9 total)
+    // Optional per-category sensors
     if (config.enableCategorySensors) {
       const categories: PollenCategory[] = ['tree', 'grass', 'weed'];
-      const levels: PollenLevel[] = ['High', 'Medium', 'Low'];
       for (const category of categories) {
-        for (const level of levels) {
-          const label = category.charAt(0).toUpperCase() + category.slice(1);
-          definitions.push({
-            id: `pollen-${category}-${level}-${location}`,
-            name: `${label} Pollen ${level}`,
-            type: 'contact',
-            level,
-            category,
-          });
-        }
+        const label = category.charAt(0).toUpperCase() + category.slice(1);
+        definitions.push({
+          id: `pollen-${category}-${location}`,
+          name: `${label} Pollen`,
+          category,
+        });
       }
-    }
-
-    // Optional air quality sensor
-    if (config.enableAirQualitySensor) {
-      definitions.push({
-        id: `pollen-airquality-${location}`,
-        name: 'Pollen Air Quality',
-        type: 'airquality',
-      });
     }
 
     return definitions;

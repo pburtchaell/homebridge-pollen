@@ -2,7 +2,7 @@
   "pluginAlias": "HomebridgePollen",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Exposes pollen levels from the [Ambee API](https://www.getambee.com/) as HomeKit contact sensors for automation.",
+  "headerDisplay": "Exposes pollen levels from the [Ambee API](https://www.getambee.com/) as HomeKit air quality sensors.",
   "footerDisplay": "For help, see the [README](https://github.com/pburtchaell/homebridge-pollen).",
   "schema": {
     "type": "object",
@@ -31,87 +31,7 @@
         "title": "Enable Per-Category Sensors",
         "type": "boolean",
         "default": false,
-        "description": "Add 9 additional sensors for Tree/Grass/Weed x High/Medium/Low."
-      },
-      "enableAirQualitySensor": {
-        "title": "Enable Air Quality Sensor",
-        "type": "boolean",
-        "default": false,
-        "description": "Add an AirQualitySensor accessory that maps overall pollen count to a 1-5 severity scale."
-      },
-      "thresholds": {
-        "title": "Threshold Overrides",
-        "type": "object",
-        "expandable": true,
-        "description": "Override default pollen count thresholds for level classification.",
-        "properties": {
-          "overall": {
-            "title": "Overall",
-            "type": "object",
-            "properties": {
-              "low": {
-                "title": "Low Threshold",
-                "type": "integer",
-                "default": 50,
-                "description": "Counts at or below this value are classified as Low."
-              },
-              "high": {
-                "title": "High Threshold",
-                "type": "integer",
-                "default": 200,
-                "description": "Counts at or above this value are classified as High."
-              }
-            }
-          },
-          "tree": {
-            "title": "Tree",
-            "type": "object",
-            "properties": {
-              "low": {
-                "title": "Low Threshold",
-                "type": "integer",
-                "default": 15
-              },
-              "high": {
-                "title": "High Threshold",
-                "type": "integer",
-                "default": 90
-              }
-            }
-          },
-          "grass": {
-            "title": "Grass",
-            "type": "object",
-            "properties": {
-              "low": {
-                "title": "Low Threshold",
-                "type": "integer",
-                "default": 20
-              },
-              "high": {
-                "title": "High Threshold",
-                "type": "integer",
-                "default": 200
-              }
-            }
-          },
-          "weed": {
-            "title": "Weed",
-            "type": "object",
-            "properties": {
-              "low": {
-                "title": "Low Threshold",
-                "type": "integer",
-                "default": 10
-              },
-              "high": {
-                "title": "High Threshold",
-                "type": "integer",
-                "default": 50
-              }
-            }
-          }
-        }
+        "description": "Add 3 additional air quality sensors for Tree, Grass, and Weed pollen."
       }
     }
   }

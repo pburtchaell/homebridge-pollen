@@ -1,8 +1,24 @@
 import type { Logger } from 'homebridge';
 import { AMBEE_BASE_URL } from './settings.js';
-import type { Thresholds } from './settings.js';
-import type { AmbeePollenResponse, ParsedPollenData } from './types.js';
-import { classifyLevel } from './types.js';
+import type { AmbeePollenResponse, ParsedPollenData, PollenLevel } from './types.js';
+
+// Internal thresholds for level classification (used for logging)
+const THRESHOLDS = {
+  overall: { low: 50, high: 200 },
+  tree: { low: 15, high: 90 },
+  grass: { low: 20, high: 200 },
+  weed: { low: 10, high: 50 },
+};
+
+function classifyLevel(count: number, thresholds: { low: number; high: number }): PollenLevel {
+  if (count >= thresholds.high) {
+    return 'High';
+  }
+  if (count <= thresholds.low) {
+    return 'Low';
+  }
+  return 'Medium';
+}
 
 export class PollenService {
   private cache: ParsedPollenData | null = null;
@@ -11,7 +27,6 @@ export class PollenService {
   constructor(
     private readonly apiKey: string,
     private readonly location: string,
-    private readonly thresholds: Thresholds,
     private readonly log: Logger,
   ) {}
 
@@ -68,19 +83,19 @@ export class PollenService {
       const parsed: ParsedPollenData = {
         overall: {
           count: totalCount,
-          level: classifyLevel(totalCount, this.thresholds.overall),
+          level: classifyLevel(totalCount, THRESHOLDS.overall),
         },
         tree: {
           count: treeCount,
-          level: classifyLevel(treeCount, this.thresholds.tree),
+          level: classifyLevel(treeCount, THRESHOLDS.tree),
         },
         grass: {
           count: grassCount,
-          level: classifyLevel(grassCount, this.thresholds.grass),
+          level: classifyLevel(grassCount, THRESHOLDS.grass),
         },
         weed: {
           count: weedCount,
-          level: classifyLevel(weedCount, this.thresholds.weed),
+          level: classifyLevel(weedCount, THRESHOLDS.weed),
         },
         timestamp: item.updatedAt,
       };
@@ -88,7 +103,7 @@ export class PollenService {
       this.cache = parsed;
       this.consecutiveFailures = 0;
 
-      this.log.debug(
+      this.log.info(
         `Pollen data updated: overall=${totalCount} (${parsed.overall.level}), `
         + `tree=${treeCount} (${parsed.tree.level}), `
         + `grass=${grassCount} (${parsed.grass.level}), `
