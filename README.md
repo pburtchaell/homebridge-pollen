@@ -86,7 +86,3 @@ When `enableCategorySensors` is enabled, you get 3 additional air quality sensor
 - **Tree Pollen** — Air quality based on tree pollen count
 - **Grass Pollen** — Air quality based on grass pollen count
 - **Weed Pollen** — Air quality based on weed pollen count
-
-## License
-
-[MIT](LICENSE)
