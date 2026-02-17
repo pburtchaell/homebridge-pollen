@@ -3,6 +3,7 @@
 [![npm](https://img.shields.io/npm/v/homebridge-pollen?style=flat-square)](https://www.npmjs.com/package/homebridge-pollen)
 [![downloads](https://img.shields.io/npm/dm/homebridge-pollen?style=flat-square)](https://www.npmjs.com/package/homebridge-pollen)
 [![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+[![verified-by-homebridge](https://img.shields.io/badge/homebridge-verified-blueviolet?color=%23491F59&style=flat-square)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 Homebridge plugin that exposes pollen levels as HomeKit air quality sensors using the [Google Pollen API](https://developers.google.com/maps/documentation/pollen).
 
