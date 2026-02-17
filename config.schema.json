@@ -2,8 +2,7 @@
   "pluginAlias": "HomebridgePollen",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Exposes pollen levels from the [Google Pollen API](https://developers.google.com/maps/documentation/pollen) as HomeKit air quality sensors.",
-  "footerDisplay": "For help, see the [README](https://github.com/pburtchaell/homebridge-pollen).",
+  "headerDisplay": "Exposes pollen levels from the Google Pollen API as HomeKit air quality sensors",
   "schema": {
     "type": "object",
     "properties": {
@@ -11,7 +10,7 @@
         "title": "API Key",
         "type": "string",
         "required": true,
-        "description": "Your Google Maps API key with the Pollen API enabled. See https://developers.google.com/maps/documentation/pollen/overview"
+        "description": "For Google API key instructions, see the [README](https://github.com/pburtchaell/homebridge-pollen#readme)."
       },
       "location": {
         "title": "Location",
@@ -31,7 +30,7 @@
         "title": "Enable Per-Category Sensors",
         "type": "boolean",
         "default": false,
-        "description": "Add 3 additional air quality sensors for Tree, Grass, and Weed pollen."
+        "description": "Add 3 additional air quality sensors for Tree, Grass and Weed pollen."
       }
     }
   }
