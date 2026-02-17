@@ -5,18 +5,22 @@
   "headerDisplay": "Exposes pollen levels from the Google Pollen API as HomeKit air quality sensors",
   "schema": {
     "type": "object",
+    "required": ["name", "apiKey", "location"],
     "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Homebridge Pollen"
+      },
       "apiKey": {
         "title": "API Key",
         "type": "string",
-        "required": true,
         "description": "For Google API key instructions, see the [README](https://github.com/pburtchaell/homebridge-pollen#readme)."
       },
       "location": {
         "title": "Location",
         "type": "string",
-        "required": true,
-        "placeholder": "10001",
+        "placeholder": "Denver, CO",
         "description": "Zip code or place name to fetch pollen data for. Geocoded to coordinates on first startup."
       },
       "pollInterval": {

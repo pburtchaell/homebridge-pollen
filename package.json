@@ -1,7 +1,8 @@
 {
   "private": false,
   "name": "homebridge-pollen",
-  "version": "2.0.0",
+  "displayName": "Homebridge Pollen",
+  "version": "2.0.1",
   "description": "Homebridge plugin to display pollen levels as HomeKit sensors using the Google Pollen API",
   "license": "MIT",
   "homepage": "https://github.com/pburtchaell/homebridge-pollen#readme",

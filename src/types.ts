@@ -1,6 +1,7 @@
 import type { PlatformConfig } from "homebridge";
 
 export interface PollenConfig extends PlatformConfig {
+  name: string;
   apiKey: string;
   location: string;
   pollInterval?: number;
