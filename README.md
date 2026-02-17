@@ -1,14 +1,14 @@
 # homebridge-pollen
 
-[![npm](https://img.shields.io/npm/v/homebridge-pollen)](https://www.npmjs.com/package/homebridge-pollen)
-[![downloads](https://img.shields.io/npm/dm/homebridge-pollen)](https://www.npmjs.com/package/homebridge-pollen)
-[![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![npm](https://img.shields.io/npm/v/homebridge-pollen?style=flat-square)](https://www.npmjs.com/package/homebridge-pollen)
+[![downloads](https://img.shields.io/npm/dm/homebridge-pollen?style=flat-square)](https://www.npmjs.com/package/homebridge-pollen)
+[![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-Homebridge plugin that exposes pollen levels as HomeKit air quality sensors using the [Ambee API](https://www.getambee.com/).
+Homebridge plugin that exposes pollen levels as HomeKit air quality sensors using the [Google Pollen API](https://developers.google.com/maps/documentation/pollen).
 
 ## Features
 
-- **Air quality sensors** — Pollen counts are mapped to HomeKit's 5-level air quality scale (Excellent, Good, Fair, Inferior, Poor)
+- **Air quality sensors** — Pollen index mapped to HomeKit's 5-level air quality scale (Excellent, Good, Fair, Inferior, Poor)
 - **Per-category sensors** — Optionally add separate sensors for tree, grass, and weed pollen
 - **No runtime dependencies** — Uses Node.js 20+ built-in `fetch`
 
@@ -31,13 +31,15 @@ npm install -g homebridge-pollen
 
 ## Getting an API key
 
-This plugin requires an API key from Ambee to fetch pollen data.
+This plugin requires a Google Maps API key with the Pollen API enabled.
 
-1. Go to the [Ambee API Dashboard](https://api-dashboard.getambee.com/)
-2. Create a free account
-3. Copy your API key from the dashboard
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or select an existing one)
+3. Enable the **Pollen API** under APIs & Services > Library
+4. Create an API key under APIs & Services > Credentials
+5. Set up a billing account if you haven't already (required even for the free tier)
 
-The free tier allows 100 API calls per day. With the default 60-minute poll interval, the plugin uses approximately 24 calls per day.
+The free tier allows 5,000 requests per month. With the default 60-minute poll interval, the plugin uses approximately 720 calls per month.
 
 ## Configuration
 
@@ -50,7 +52,7 @@ You can configure the plugin using the Homebridge UI or by editing your `config.
   "platforms": [
     {
       "platform": "HomebridgePollen",
-      "apiKey": "your-ambee-api-key",
+      "apiKey": "your-google-maps-api-key",
       "location": "10001"
     }
   ]
@@ -62,27 +64,34 @@ You can configure the plugin using the Homebridge UI or by editing your `config.
 | Option | Required | Default | Description |
 |--------|----------|---------|-------------|
 | `platform` | Yes | — | Must be `HomebridgePollen` |
-| `apiKey` | Yes | — | Your Ambee API key |
-| `location` | Yes | — | Zip code or place name to fetch pollen data for |
+| `apiKey` | Yes | — | Your Google Maps API key with the Pollen API enabled |
+| `location` | Yes | — | Zip code or place name. Geocoded to coordinates on first startup and cached. |
 | `pollInterval` | No | `60` | How often to fetch pollen data, in minutes (minimum 15) |
 | `enableCategorySensors` | No | `false` | Add 3 additional sensors for tree, grass, and weed pollen |
 
 ## How it works
 
-The plugin creates an air quality sensor that displays the overall pollen level. Pollen counts are mapped to HomeKit's air quality scale:
+The plugin creates an air quality sensor that displays the overall pollen level. The Google Pollen API provides a Universal Pollen Index (UPI) from 0–5, which maps to HomeKit's air quality scale:
 
-| Pollen count | Air quality |
-|--------------|-------------|
-| 0-20         | Excellent   |
-| 21-80        | Good        |
-| 81-200       | Fair        |
-| 201-400      | Inferior    |
-| 400+         | Poor        |
+| UPI | Category | Air quality |
+|-----|----------|-------------|
+| 0   | None     | Excellent   |
+| 1   | Very Low | Excellent   |
+| 2   | Low      | Good        |
+| 3   | Moderate | Fair        |
+| 4   | High     | Inferior    |
+| 5   | Very High| Poor        |
+
+The overall sensor displays the worst (highest) pollen index across tree, grass, and weed categories.
+
+### Location geocoding
+
+The plugin accepts a place name or zip code in the `location` config field. On first startup, it geocodes this to latitude/longitude coordinates using [Nominatim](https://nominatim.openstreetmap.org/) (OpenStreetMap) and caches the result. Subsequent startups use the cached coordinates unless the location changes.
 
 ### Optional sensors
 
 When `enableCategorySensors` is enabled, you get 3 additional air quality sensors:
 
-- **Tree Pollen** — Air quality based on tree pollen count
-- **Grass Pollen** — Air quality based on grass pollen count
-- **Weed Pollen** — Air quality based on weed pollen count
+- **Tree Pollen** — Air quality based on tree pollen index
+- **Grass Pollen** — Air quality based on grass pollen index
+- **Weed Pollen** — Air quality based on weed pollen index

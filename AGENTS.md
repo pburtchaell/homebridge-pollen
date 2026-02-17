@@ -1,6 +1,6 @@
 # homebridge-pollen
 
-Homebridge plugin that exposes Ambee pollen data as HomeKit air quality sensors. No runtime dependencies — uses Node.js 20+ built-in `fetch`.
+Homebridge plugin that exposes Google Pollen API data as HomeKit air quality sensors. No runtime dependencies — uses Node.js 20+ built-in `fetch`.
 
 ## Commands
 
@@ -11,4 +11,4 @@ Homebridge plugin that exposes Ambee pollen data as HomeKit air quality sensors.
 ## Docs
 
 - Homebridge plugin patterns: docs/HOMEBRIDGE.md
-- Ambee API and error handling: docs/API.md
+- Google Pollen API and error handling: docs/API.md

@@ -1,9 +1,11 @@
 src/
+test/
 scripts/
 .homebridge/
-tsconfig.json
-nodemon.json
-eslint.config.js
 .github/
 .claude/
 .cursor/
+tsconfig.json
+nodemon.json
+eslint.config.mjs
+vitest.config.ts

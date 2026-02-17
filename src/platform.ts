@@ -4,16 +4,17 @@ import type {
   Logger,
   PlatformAccessory,
   PlatformConfig,
-} from 'homebridge';
+} from "homebridge";
 import {
   DEFAULT_POLL_INTERVAL,
   MIN_POLL_INTERVAL,
   PLATFORM_NAME,
   PLUGIN_NAME,
-} from './settings.js';
-import type { AccessoryDefinition, PollenCategory, PollenConfig } from './types.js';
-import { PollenService } from './pollenService.js';
-import { PollenAccessoryHandler } from './platformAccessory.js';
+} from "./settings.js";
+import type { AccessoryDefinition, PollenCategory, PollenConfig } from "./types.js";
+import { PollenService } from "./pollenService.js";
+import { GeocodeService } from "./geocodeService.js";
+import { PollenAccessoryHandler } from "./platformAccessory.js";
 
 export class PollenPlatform implements DynamicPlatformPlugin {
   private readonly cachedAccessories: PlatformAccessory[] = [];
@@ -30,24 +31,17 @@ export class PollenPlatform implements DynamicPlatformPlugin {
 
     if (!pollenConfig.apiKey || !pollenConfig.location) {
       this.log.error(
-        'Missing required configuration: apiKey and location must be set. '
-        + 'Plugin will not start.',
+        "Missing required configuration: apiKey and location must be set. "
+        + "Plugin will not start.",
       );
       return;
     }
 
-    this.pollenService = new PollenService(
-      pollenConfig.apiKey,
-      pollenConfig.location,
-      this.log,
-    );
-
-    this.api.on('didFinishLaunching', () => {
-      this.discoverDevices(pollenConfig);
-      this.startPolling(pollenConfig);
+    this.api.on("didFinishLaunching", () => {
+      this.initialize(pollenConfig);
     });
 
-    this.api.on('shutdown', () => {
+    this.api.on("shutdown", () => {
       if (this.pollTimer) {
         clearInterval(this.pollTimer);
       }
@@ -57,6 +51,30 @@ export class PollenPlatform implements DynamicPlatformPlugin {
   configureAccessory(accessory: PlatformAccessory): void {
     this.log.info(`Loading accessory from cache: ${accessory.displayName}`);
     this.cachedAccessories.push(accessory);
+  }
+
+  private async initialize(config: PollenConfig): Promise<void> {
+    try {
+      const geocoder = new GeocodeService(this.log);
+      const { latitude, longitude } = await geocoder.resolve(
+        config.location,
+        this.api.user.storagePath(),
+      );
+
+      this.pollenService = new PollenService(
+        config.apiKey,
+        latitude,
+        longitude,
+        this.log,
+      );
+
+      this.discoverDevices(config);
+      this.startPolling(config);
+    } catch (error) {
+      this.log.error(
+        `Failed to initialize plugin: ${error instanceof Error ? error.message : error}`,
+      );
+    }
   }
 
   private discoverDevices(config: PollenConfig): void {
@@ -101,13 +119,13 @@ export class PollenPlatform implements DynamicPlatformPlugin {
     // Main pollen air quality sensor (always created)
     definitions.push({
       id: `pollen-overall-${location}`,
-      name: 'Pollen',
-      category: 'overall',
+      name: "Pollen",
+      category: "overall",
     });
 
     // Optional per-category sensors
     if (config.enableCategorySensors) {
-      const categories: PollenCategory[] = ['tree', 'grass', 'weed'];
+      const categories: PollenCategory[] = ["tree", "grass", "weed"];
       for (const category of categories) {
         const label = category.charAt(0).toUpperCase() + category.slice(1);
         definitions.push({
@@ -132,7 +150,7 @@ export class PollenPlatform implements DynamicPlatformPlugin {
     );
     const intervalMs = intervalMinutes * 60 * 1000;
 
-    this.log.info(`Polling Ambee API every ${intervalMinutes} minutes for location "${config.location}"`);
+    this.log.info(`Polling Google Pollen API every ${intervalMinutes} minutes for location "${config.location}"`);
 
     // Immediate first fetch
     this.poll();
@@ -154,7 +172,7 @@ export class PollenPlatform implements DynamicPlatformPlugin {
 
     const data = await this.pollenService.fetchPollenData();
     if (!data) {
-      this.log.debug('No pollen data available (no cached data yet).');
+      this.log.debug("No pollen data available (no cached data yet).");
       return;
     }
 

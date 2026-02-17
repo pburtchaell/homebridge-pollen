@@ -1,0 +1,15 @@
+{
+  "bridge": {
+    "name": "PollenDevBridge",
+    "username": "AA:BB:CC:DD:EE:FF",
+    "port": 51826,
+    "pin": "031-45-154"
+  },
+  "platforms": [
+    {
+      "platform": "HomebridgePollen",
+      "apiKey": "your-google-maps-api-key",
+      "location": "10001"
+    }
+  ]
+}

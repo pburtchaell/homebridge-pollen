@@ -2,7 +2,7 @@
   "pluginAlias": "HomebridgePollen",
   "pluginType": "platform",
   "singular": true,
-  "headerDisplay": "Exposes pollen levels from the [Ambee API](https://www.getambee.com/) as HomeKit air quality sensors.",
+  "headerDisplay": "Exposes pollen levels from the [Google Pollen API](https://developers.google.com/maps/documentation/pollen) as HomeKit air quality sensors.",
   "footerDisplay": "For help, see the [README](https://github.com/pburtchaell/homebridge-pollen).",
   "schema": {
     "type": "object",
@@ -11,21 +11,21 @@
         "title": "API Key",
         "type": "string",
         "required": true,
-        "description": "Your Ambee API key. Get one at https://api-dashboard.getambee.com/"
+        "description": "Your Google Maps API key with the Pollen API enabled. See https://developers.google.com/maps/documentation/pollen/overview"
       },
       "location": {
         "title": "Location",
         "type": "string",
         "required": true,
         "placeholder": "10001",
-        "description": "Zip code or place name to fetch pollen data for."
+        "description": "Zip code or place name to fetch pollen data for. Geocoded to coordinates on first startup."
       },
       "pollInterval": {
         "title": "Poll Interval (minutes)",
         "type": "integer",
         "default": 60,
         "minimum": 15,
-        "description": "How often to fetch pollen data from Ambee. Minimum 15 minutes. Free tier allows ~100 calls/day."
+        "description": "How often to fetch pollen data. Minimum 15 minutes. Free tier allows 5,000 calls/month."
       },
       "enableCategorySensors": {
         "title": "Enable Per-Category Sensors",
