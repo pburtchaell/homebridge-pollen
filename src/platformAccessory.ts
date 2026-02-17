@@ -4,8 +4,8 @@ import type {
   Logger,
   PlatformAccessory,
   Service,
-} from 'homebridge';
-import type { AccessoryDefinition, ParsedPollenData, PollenCategory } from './types.js';
+} from "homebridge";
+import type { AccessoryDefinition, ParsedPollenData, PollenCategory } from "./types.js";
 
 export class PollenAccessoryHandler {
   private readonly service: Service;
@@ -20,8 +20,8 @@ export class PollenAccessoryHandler {
     this.Characteristic = this.api.hap.Characteristic;
 
     this.accessory.getService(this.api.hap.Service.AccessoryInformation)!
-      .setCharacteristic(this.Characteristic.Manufacturer, 'Ambee')
-      .setCharacteristic(this.Characteristic.Model, 'Pollen Sensor')
+      .setCharacteristic(this.Characteristic.Manufacturer, "Google")
+      .setCharacteristic(this.Characteristic.Model, "Pollen Sensor")
       .setCharacteristic(this.Characteristic.SerialNumber, definition.id);
 
     this.service = this.accessory.getService(this.api.hap.Service.AirQualitySensor)
@@ -32,31 +32,33 @@ export class PollenAccessoryHandler {
 
   updatePollenData(data: ParsedPollenData): void {
     const category = this.definition.category as PollenCategory;
-    const count = data[category].count;
-    const quality = this.mapCountToAirQuality(count);
+    const index = data[category].index;
+    const quality = this.mapIndexToAirQuality(index);
 
     this.service.updateCharacteristic(this.Characteristic.AirQuality, quality);
 
     this.log.debug(
-      `${this.definition.name}: ${category} count=${count}, AirQuality=${quality}`,
+      `${this.definition.name}: ${category} index=${index}, AirQuality=${quality}`,
     );
   }
 
-  private mapCountToAirQuality(count: number): number {
-    // Map pollen count to HomeKit AirQuality enum (0-5)
+  private mapIndexToAirQuality(index: number): number {
+    // Map Google UPI (0-5) to HomeKit AirQuality enum (0-5)
     // 0=UNKNOWN, 1=EXCELLENT, 2=GOOD, 3=FAIR, 4=INFERIOR, 5=POOR
-    if (count <= 20) {
-      return this.Characteristic.AirQuality.EXCELLENT;
+    switch (index) {
+      case 0: // None
+      case 1: // Very Low
+        return this.Characteristic.AirQuality.EXCELLENT;
+      case 2: // Low
+        return this.Characteristic.AirQuality.GOOD;
+      case 3: // Moderate
+        return this.Characteristic.AirQuality.FAIR;
+      case 4: // High
+        return this.Characteristic.AirQuality.INFERIOR;
+      case 5: // Very High
+        return this.Characteristic.AirQuality.POOR;
+      default:
+        return this.Characteristic.AirQuality.UNKNOWN;
     }
-    if (count <= 80) {
-      return this.Characteristic.AirQuality.GOOD;
-    }
-    if (count <= 200) {
-      return this.Characteristic.AirQuality.FAIR;
-    }
-    if (count <= 400) {
-      return this.Characteristic.AirQuality.INFERIOR;
-    }
-    return this.Characteristic.AirQuality.POOR;
   }
 }

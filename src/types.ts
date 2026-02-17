@@ -1,4 +1,4 @@
-import type { PlatformConfig } from 'homebridge';
+import type { PlatformConfig } from "homebridge";
 
 export interface PollenConfig extends PlatformConfig {
   apiKey: string;
@@ -7,42 +7,47 @@ export interface PollenConfig extends PlatformConfig {
   enableCategorySensors?: boolean;
 }
 
-export interface AmbeePollenCount {
-  grass_pollen: number;
-  tree_pollen: number;
-  weed_pollen: number;
+// Google Pollen API response types
+
+export interface GooglePollenResponse {
+  regionCode?: string;
+  dailyInfo: GoogleDayInfo[];
 }
 
-export interface AmbeePollenRisk {
-  grass_pollen: string;
-  tree_pollen: string;
-  weed_pollen: string;
+export interface GoogleDayInfo {
+  date: { year: number; month: number; day: number };
+  pollenTypeInfo: GooglePollenTypeInfo[];
 }
 
-export interface AmbeePollenSpecies {
-  Grass: Record<string, number>;
-  Tree: Record<string, number>;
-  Weed: Record<string, number>;
+export interface GooglePollenTypeInfo {
+  code: "GRASS" | "TREE" | "WEED";
+  displayName: string;
+  inSeason: boolean;
+  indexInfo?: GoogleIndexInfo;
 }
 
-export interface AmbeePollenDataItem {
-  Count: AmbeePollenCount;
-  Risk: AmbeePollenRisk;
-  Species: AmbeePollenSpecies;
-  updatedAt: string;
+export interface GoogleIndexInfo {
+  code: string;
+  displayName: string;
+  value: number;
+  category: string;
 }
 
-export interface AmbeePollenResponse {
-  message: string;
-  data: AmbeePollenDataItem[];
+// Geocoding
+
+export interface GeocodeCacheEntry {
+  location: string;
+  latitude: number;
+  longitude: number;
 }
 
-export type PollenLevel = 'High' | 'Medium' | 'Low';
-export type PollenCategory = 'overall' | 'tree' | 'grass' | 'weed';
+// Internal normalized types (API-agnostic)
+
+export type PollenCategory = "overall" | "tree" | "grass" | "weed";
 
 export interface CategoryData {
-  count: number;
-  level: PollenLevel;
+  index: number;
+  level: string;
 }
 
 export interface ParsedPollenData {

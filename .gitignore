@@ -1,6 +1,7 @@
 dist/
 node_modules/
 .homebridge/
-.github/
+test/homebridge/persist/
+test/homebridge/accessories/
 .claude/
 .cursor/
