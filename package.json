@@ -21,6 +21,10 @@
     "allergy",
     "allergies"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pburtchaell/homebridge-pollen.git"
+  },
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "test": "vitest run",
