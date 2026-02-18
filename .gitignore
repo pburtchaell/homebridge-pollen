@@ -5,3 +5,4 @@ test/homebridge/persist/
 test/homebridge/accessories/
 .claude/
 .cursor/
+.DS_Store
